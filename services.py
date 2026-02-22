@@ -86,16 +86,16 @@ def create_order():
     draft_orders = {}
 
     #Στρογγυλοποίηση προς τα πάνω στο είδος που παραγγέλνεται
-    def get_packaging_info(pieces, prod):
-        if pieces == 0: return "Ακυρώθηκε", 0
+def get_packaging_info(pieces, prod):
+    if pieces == 0: return "Ακυρώθηκε", 0
         
-        if prod.units_per_pallet != 1:
+    if prod.units_per_pallet != 1:
             pallets = math.ceil(pieces / prod.units_per_pallet)
             return f"{pallets} Παλ.", pallets * prod.units_per_pallet
-        elif prod.units_per_box != 1:
+    elif prod.units_per_box != 1:
             boxes = math.ceil(pieces / prod.units_per_box)
             return f"{boxes} Κιβ.", boxes * prod.units_per_box
-        else:
+    else:
             return f"{pieces} Τεμ.", pieces
 
 
