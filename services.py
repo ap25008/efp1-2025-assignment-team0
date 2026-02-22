@@ -146,3 +146,23 @@ def create_order():
         if action == "1":
             print(" ΕΠΙΤΥΧΙΑ: Η παραγγελία υποβλήθηκε επιτυχώς στους προμηθευτές!")
             break
+
+        elif action == "2":
+            target_barcode = input("\nΕισάγετε το Barcode του προϊόντος προς τροποποίηση: ")
+            
+            if target_barcode in draft_orders:
+                entry = draft_orders[target_barcode]
+                p = entry['product']
+                print(f"\nΕπιλεγμένο προϊόν: {p.name} | Τρέχουσα επιλογή: {entry['final_text']} ({entry['final_pieces']} τεμ.)")
+                
+                new_choice = input("Εισάγετε τη νέα επιθυμητή ποσότητα σε τεμάχια: ")
+                if new_choice.strip():
+                    input_pieces = int(new_choice)
+                    new_text, new_total = get_packaging_info(input_pieces, p)
+                    entry['final_pieces'] = new_total
+                    entry['final_text'] = new_text
+                    print(f"-> Η ποσότητα ενημερώθηκε και στρογγυλοποιήθηκε σε {new_text} ({new_total} τεμ.)!")
+            else:
+                print("-> Σφάλμα: Το Barcode δεν βρέθηκε στη λίστα της τρέχουσας παραγγελίας.")
+        else:
+            print("-> Λάθος επιλογή. Παρακαλώ πληκτρολογήστε 1 ή 2.")
