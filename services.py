@@ -114,9 +114,9 @@ def show_inventory():
         print("\nΤο απόθεμα είναι άδειο.")
         return
     print("\nΤΡΕΧΟΝ ΑΠΟΘΕΜΑ")
-    print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΤΙΜΗ':<6} | {'ΑΠΟΘΕΜΑ(ΤΕΜ)':<13} | {'MIN':<4} | {'MAX':<4}")
+    print(f"{'BARCODE':<15} | {'ΠΡΟΪΟΝ':<25} | {'ΚΑΤΗΓΟΡΙΑ':<30} | {'ΤΙΜΗ':<6} | {'ΑΠΟΘΕΜΑ(ΤΕΜ)':<13} | {'MIN':<4} | {'MAX':<4}")
     for item in inventory:
-        print(f"{item.product.barcode:<8} | {item.product.name:<12} | {item.product.category:<10} | {item.product.price:<6} | {item.quantity:<13} | {item.product.min_limit:<4} | {item.product.max_limit:<4}")
+        print(f"{item.product.barcode:<15} | {item.product.name:<25} | {item.product.category:<30} | {item.product.price:<6} | {item.quantity:<13} | {item.product.min_limit:<4} | {item.product.max_limit:<4}")
 
 # Προβολή Παραγγελιών
 def show_orders():
@@ -127,9 +127,9 @@ def show_orders():
     print("\nΛίστα Παραγγελιών:")
     for order in orders:
         print(f"\nΠαραγγελία #{order.order_id} - Ημερομηνία: {order.date} - Κατάσταση: {order.status}")
-        print(f"{'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ':<10} | {'ΣΥΣΚΕΥΑΣΙΑ'}")
+        print(f"{'ΠΡΟΪΟΝ':<25} | {'ΠΟΣΟΤΗΤΑ':<10} | {'ΣΥΣΚΕΥΑΣΙΑ'}")
         for item in order.items:
-            print(f"{item.product.name:<15} | {item.quantity:<10} | {item.package_text}")
+            print(f"{item.product.name:<25} | {item.quantity:<10} | {item.package_text}")
 
 
     #Στρογγυλοποίηση προς τα πάνω στο είδος που παραγγέλνεται
@@ -150,7 +150,7 @@ def get_packaging_info(pieces, prod):
 # Use Case: Δημιουργία Παραγγελίας
 
 def create_order():
-    print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΑΠΟΘΕΜΑ':<7} | {'ΕΛΛΕΙΜΜΑ':<8} | {'ΠΡΟΤΑΣΗ ΑΝΑΠΛΗΡΩΣΗΣ'}")
+    print(f"{'BARCODE':<15} | {'ΠΡΟΪΟΝ':<25} | {'ΚΑΤΗΓΟΡΙΑ':<30} | {'ΑΠΟΘΕΜΑ':<7} | {'ΕΛΛΕΙΜΜΑ':<8} | {'ΠΡΟΤΑΣΗ ΑΝΑΠΛΗΡΩΣΗΣ'}")
 
     draft_orders = {}
 
@@ -174,7 +174,7 @@ def create_order():
                 'final_text': proposal_text
             }
             
-            print(f"{p.barcode:<8} | {p.name:<12} | {p.category:<10} | {item.quantity:<7} | {needed:<8} | {proposal_text}")
+            print(f"{p.barcode:<15} | {p.name:<25} | {p.category:<30} | {item.quantity:<7} | {needed:<8} | {proposal_text}")
 
     if not draft_orders:
         print("Το απόθεμα είναι επαρκές. Δεν απαιτείται παραγγελία.")
@@ -200,11 +200,11 @@ def create_order():
     # 3. Βρόχος (Loop) Προεπισκόπησης και Υποβολής/Τροποποίησης
     while True:
         print("ΠΡΟΕΠΙΣΚΟΠΗΣΗ ΠΑΡΑΓΓΕΛΙΑΣ")
-        print(f"{'BARCODE':<10} | {'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ (ΤΕΜ)':<15} | {'ΤΕΛΙΚΕΣ ΣΥΣΚΕΥΑΣΙΕΣ'}")
+        print(f"{'BARCODE':<15} | {'ΠΡΟΪΟΝ':<25} | {'ΠΟΣΟΤΗΤΑ (ΤΕΜ)':<15} | {'ΤΕΛΙΚΕΣ ΣΥΣΚΕΥΑΣΙΕΣ'}")
         
         for barcode, entry in draft_orders.items():
             if entry['final_pieces'] > 0:
-                print(f"{barcode:<10} | {entry['product'].name:<15} | {entry['final_pieces']:<15} | {entry['final_text']}")
+                print(f"{barcode:<15} | {entry['product'].name:<25} | {entry['final_pieces']:<15} | {entry['final_text']}")
         
         print("\nΕπιλογές:")
         print("1. Υποβολή (Οριστικοποίηση της παραγγελίας)")
