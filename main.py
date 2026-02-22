@@ -1,7 +1,7 @@
 
 # ΚΥΡΙΟ ΠΡΟΓΡΑΜΜΑ 
 
-from services import register_invoice, show_invoices, show_inventory, create_order
+from services import register_invoice, show_invoices, update_inventory, show_inventory, create_order, get_packaging_info
 
 
 def main():
@@ -11,6 +11,7 @@ def main():
         print("2. Προβολή τιμολογίων")
         print("3. Προβολή αποθέματος")
         print("4. Καταχώρηση νέας παραγγελίας")
+        print("5. Προβολή παραγγελιών")
         print("0. Έξοδος")
 
         choice = input("Επιλογή: ")
@@ -23,6 +24,8 @@ def main():
             show_inventory()
         elif choice == "4":
             create_order()
+        elif choice == "5":
+            show_orders()
         elif choice == "0":
             print("Έξοδος...")
             break

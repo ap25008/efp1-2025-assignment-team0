@@ -1,4 +1,7 @@
 
+import math
+import datetime  #Εισαγωγή βιβλιοθήκης για ημερομηνία και ώρα
+
 # (Use Cases)
 
 
@@ -9,6 +12,9 @@ invoices = []
 
 # Λίστα αποθέματος
 inventory = []
+
+# Λίστα αποθηκευμένων παραγγελιών
+orders = []
 
 # INCLUDE USE CASE: Ενημέρωση Αποθέματος
 
@@ -101,11 +107,143 @@ def show_inventory():
     print("\nΤΡΕΧΟΝ ΑΠΟΘΕΜΑ")
     print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΤΙΜΗ':<6} | {'ΑΠΟΘΕΜΑ(ΤΕΜ)':<13} | {'MIN':<4} | {'MAX':<4}")
     for item in inventory:
-        p = item.product
-        print(f"{p.barcode:<8} | {p.name:<12} | {p.category:<10} | {p.price:<6.2f} | {item.quantity:<13} | {p.min_limit:<4} | {p.max_limit:<4}")
+        print(f"{item.product.name} - {item.quantity} τεμάχια")
 
-# Placeholder για Use Case Παραγγελίας
+# Προβολή Παραγγελιών
+def show_orders():
+    if not orders:
+        print("\nΔεν υπάρχουν καταχωρημένες παραγγελίες.\n")
+        return
+
+    print("\nΛίστα Παραγγελιών:")
+    for order in orders:
+        print(f"\nΠαραγγελία #{order.order_id} - Ημερομηνία: {order.date} - Κατάσταση: {order.status}")
+        print(f"{'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ':<10} | {'ΣΥΣΚΕΥΑΣΙΑ'}")
+        print("-" * 45)
+        for item in order.items:
+            print(f"{item.product.name:<15} | {item.quantity:<10} | {item.package_text}")
+
+
+    #Στρογγυλοποίηση προς τα πάνω στο είδος που παραγγέλνεται
+def get_packaging_info(pieces, prod):
+    if pieces == 0: return "Ακυρώθηκε", 0
+        
+    if prod.units_per_pallet != 1:
+            pallets = math.ceil(pieces / prod.units_per_pallet)
+            return f"{pallets} Παλ.", pallets * prod.units_per_pallet
+    elif prod.units_per_box != 1:
+            boxes = math.ceil(pieces / prod.units_per_box)
+            return f"{boxes} Κιβ.", boxes * prod.units_per_box
+    else:
+            return f"{pieces} Τεμ.", pieces
+
+
+
+# Use Case: Δημιουργία Παραγγελίας
 
 def create_order():
-    print("\nΚαταχώρηση νέας παραγγελίας")
-    print("Η λειτουργία δεν έχει υλοποιηθεί ακόμη.\n")
+    print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΑΠΟΘΕΜΑ':<7} | {'ΕΛΛΕΙΜΜΑ':<8} | {'ΠΡΟΤΑΣΗ ΑΝΑΠΛΗΡΩΣΗΣ'}")
+
+    draft_orders = {}
+
+
+ # 1. Παραγωγή αρχικής πρότασης από το σύστημα
+    for item in inventory:
+        p = item.product
+        if item.quantity <= p.min_limit:
+            needed = p.max_limit - item.quantity
+            
+            # Υπολογισμός νέας καθαρής πρότασης
+            proposal_text, total_prop_pieces = get_packaging_info(needed, p)
+            
+            draft_orders[p.barcode] = {
+                'product': p,
+                'current_qty': item.quantity,
+                'sys_needed': needed,
+                'sys_text': proposal_text,
+                'sys_pieces': total_prop_pieces,
+                'final_pieces': total_prop_pieces,
+                'final_text': proposal_text
+            }
+            
+            print(f"{p.barcode:<8} | {p.name:<12} | {p.category:<10} | {item.quantity:<7} | {needed:<8} | {proposal_text}")
+
+    if not draft_orders:
+        print("Το απόθεμα είναι επαρκές. Δεν απαιτείται παραγγελία.")
+        return
+
+    # 2. Αρχική Εισαγωγή Ποσοτήτων από τον Διευθυντή
+    print("\n ΑΡΧΙΚΗ ΕΠΕΞΕΡΓΑΣΙΑ ΔΙΕΥΘΥΝΤΗ")
+    for barcode, entry in draft_orders.items():
+        p = entry['product']
+        print(f"\nΠροϊόν: {p.barcode} | {p.name} (Τρέχον Απόθεμα: {entry['current_qty']})")
+        print(f"Πρόταση Συστήματος: {entry['sys_text']} (Η οποία καλύπτει {entry['sys_pieces']} τεμάχια)")
+        
+        choice = input(f"Πόσα συνολικά ΤΕΜΑΧΙΑ θέλετε να παραγγείλετε; (Enter για αποδοχή των {entry['sys_pieces']}): ")
+        
+        if choice.strip():
+            input_pieces = int(choice)
+            new_text, new_total = get_packaging_info(input_pieces, p)
+            entry['final_pieces'] = new_total
+            entry['final_text'] = new_text
+            print(f"-> Το σύστημα στρογγυλοποίησε την επιλογή σας σε: {new_text} (Σύνολο: {new_total} τεμ.)")
+
+
+    # 3. Βρόχος (Loop) Προεπισκόπησης και Υποβολής/Τροποποίησης
+    while True:
+        print("ΠΡΟΕΠΙΣΚΟΠΗΣΗ ΠΑΡΑΓΓΕΛΙΑΣ")
+        print(f"{'BARCODE':<10} | {'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ (ΤΕΜ)':<15} | {'ΤΕΛΙΚΕΣ ΣΥΣΚΕΥΑΣΙΕΣ'}")
+        
+        for barcode, entry in draft_orders.items():
+            if entry['final_pieces'] > 0:
+                print(f"{barcode:<10} | {entry['product'].name:<15} | {entry['final_pieces']:<15} | {entry['final_text']}")
+        
+        print("\nΕπιλογές:")
+        print("1. Υποβολή (Οριστικοποίηση της παραγγελίας)")
+        print("2. Τροποποίηση (Αλλαγή ποσότητας σε συγκεκριμένο προϊόν)")
+        
+        action = input("Επιλέξτε ενέργεια (1 ή 2): ")
+        
+        if action == "1":
+            # Χρήση των κλάσεων Order και OrderItem 
+            today_date = datetime.date.today().strftime("%Y-%m-%d")
+            order_number = len(orders) + 1
+            
+            # Δημιουργία του αντικειμένου Order
+            new_order = Order(order_number, today_date)
+
+            # Προσθήκη των προϊόντων (OrderItems) μέσα στην παραγγελία
+            for barcode, entry in draft_orders.items():
+                if entry['final_pieces'] > 0:
+                    order_item = OrderItem(entry['product'], entry['final_pieces'], entry['final_text'])
+                    new_order.items.append(order_item)
+            
+            # Αποθήκευση της νέας παραγγελίας στη λίστα
+            orders.append(new_order)
+
+            # Εμφάνιση των στοιχείων της παραγγελίας
+            print(" ΕΠΙΤΥΧΙΑ: Η παραγγελία υποβλήθηκε επιτυχώς!")
+            print(f" Αριθμός Παραγγελίας : {new_order.order_id}")
+            print(f" Ημερομηνία          : {new_order.date}")
+            print(f" Κατάσταση           : {new_order.status}")
+            break
+
+        elif action == "2":
+            target_barcode = input("\nΕισάγετε το Barcode του προϊόντος προς τροποποίηση: ")
+            
+            if target_barcode in draft_orders:
+                entry = draft_orders[target_barcode]
+                p = entry['product']
+                print(f"\nΕπιλεγμένο προϊόν: {p.name} | Τρέχουσα επιλογή: {entry['final_text']} ({entry['final_pieces']} τεμ.)")
+                
+                new_choice = input("Εισάγετε τη νέα επιθυμητή ποσότητα σε τεμάχια: ")
+                if new_choice.strip():
+                    input_pieces = int(new_choice)
+                    new_text, new_total = get_packaging_info(input_pieces, p)
+                    entry['final_pieces'] = new_total
+                    entry['final_text'] = new_text
+                    print(f"-> Η ποσότητα ενημερώθηκε και στρογγυλοποιήθηκε σε {new_text} ({new_total} τεμ.)!")
+            else:
+                print("-> Σφάλμα: Το Barcode δεν βρέθηκε στη λίστα της τρέχουσας παραγγελίας.")
+        else:
+            print("-> Λάθος επιλογή. Παρακαλώ πληκτρολογήστε 1 ή 2.")
