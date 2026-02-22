@@ -28,7 +28,7 @@ Standard Library
 Clone του repository:
 
 git clone <(https://github.com/ap25008/efp1-2025-assignment-team0)>
-cd <φάκελος του project>
+cd <efp1-2025-assignment-team0>
 
 Εκτέλεση:
 
