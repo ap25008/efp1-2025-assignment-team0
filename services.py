@@ -36,12 +36,7 @@ def register_invoice():
     invoice = Invoice(len(invoices) + 1, date)
 
 
-
-
     # Εισαγωγή δεδομένων από χρήστη
-
-
-    
     while True:
         print("\nΣτοιχεία Προϊόντος")
         barcode = input("Barcode: ")
@@ -62,6 +57,11 @@ def register_invoice():
            if pkg_choice not in ["1", "2", "3"]:
                print("ΛΑΘΟΣ: Μη αποδεκτή επιλογή! Δοκιμάστε ξανά.")
 
+
+        u_pallet = 1
+        u_box = 1
+        total_pieces = quantity_input
+
         if pkg_choice == "1":
             u_pallet = int(input("Πόσα τεμάχια αντιστοιχούν σε 1 ΠΑΛΕΤΑ; "))
             total_pieces = quantity_input * u_pallet
@@ -69,12 +69,11 @@ def register_invoice():
             u_box = int(input("Πόσα τεμάχια αντιστοιχούν σε 1 ΚΙΒΩΤΙΟ; "))
             total_pieces = quantity_input * u_box
 
+
         pkg_map = {"1": "Παλέτα", "2": "Κιβώτιο", "3": "Τεμάχιο"}
         package_type = pkg_map.get(pkg_choice)
 
-        u_pallet = 1
-        u_box = 1
-        total_pieces = quantity_input
+        
 
         
 
