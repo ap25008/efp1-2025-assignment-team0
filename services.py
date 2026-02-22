@@ -13,6 +13,9 @@ invoices = []
 # Λίστα αποθέματος
 inventory = []
 
+# Λίστα αποθηκευμένων παραγγελιών
+orders = []
+
 # INCLUDE USE CASE: Ενημέρωση Αποθέματος
 
 def update_inventory(product, quantity):
@@ -79,6 +82,19 @@ def show_inventory():
     for item in inventory:
         print(f"{item.product.name} - {item.quantity} τεμάχια")
 
+# Προβολή Παραγγελιών
+def show_orders():
+    if not orders:
+        print("\nΔεν υπάρχουν καταχωρημένες παραγγελίες.\n")
+        return
+
+    print("\nΛίστα Παραγγελιών:")
+    for order in orders:
+        print(f"\nΠαραγγελία #{order.order_id} - Ημερομηνία: {order.date} - Κατάσταση: {order.status}")
+        print(f"{'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ':<10} | {'ΣΥΣΚΕΥΑΣΙΑ'}")
+        print("-" * 45)
+        for item in order.items:
+            print(f"{item.product.name:<15} | {item.quantity:<10} | {item.package_text}")
 
 
 # Placeholder για Use Case Παραγγελίας
