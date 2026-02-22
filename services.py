@@ -111,3 +111,19 @@ def create_order():
         print("Το απόθεμα είναι επαρκές. Δεν απαιτείται παραγγελία.")
         return
 
+    # 2. Αρχική Εισαγωγή Ποσοτήτων από τον Διευθυντή
+    print("\n--- ΑΡΧΙΚΗ ΕΠΕΞΕΡΓΑΣΙΑ ΔΙΕΥΘΥΝΤΗ ---")
+    for barcode, entry in draft_orders.items():
+        p = entry['product']
+        print(f"\nΠροϊόν: {p.barcode} | {p.name} (Τρέχον Απόθεμα: {entry['current_qty']})")
+        print(f"Πρόταση Συστήματος: {entry['sys_text']} (Η οποία καλύπτει {entry['sys_pieces']} τεμάχια)")
+        
+        choice = input(f"Πόσα συνολικά ΤΕΜΑΧΙΑ θέλετε να παραγγείλετε; (Enter για αποδοχή των {entry['sys_pieces']}): ")
+        
+        if choice.strip():
+            input_pieces = int(choice)
+            new_text, new_total = get_packaging_info(input_pieces, p)
+            entry['final_pieces'] = new_total
+            entry['final_text'] = new_text
+            print(f"-> Το σύστημα στρογγυλοποίησε την επιλογή σας σε: {new_text} (Σύνολο: {new_total} τεμ.)")
+
