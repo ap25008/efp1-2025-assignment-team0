@@ -5,7 +5,7 @@ import datetime  #Εισαγωγή βιβλιοθήκης για ημερομη�
 # (Use Cases)
 
 
-from models import Product, InvoiceItem, Invoice, InventoryItem
+from models import Product, InvoiceItem, Invoice, InventoryItem, OrderItem, Order
 
 # Λίστα αποθηκευμένων τιμολογίων
 invoices = []

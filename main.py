@@ -1,8 +1,7 @@
 
 # ΚΥΡΙΟ ΠΡΟΓΡΑΜΜΑ 
 
-from services import register_invoice, show_invoices, update_inventory, show_inventory, create_order, get_packaging_info
-
+from services import register_invoice, show_invoices, update_inventory, show_inventory, create_order, get_packaging_info, show_orders
 
 def main():
     while True:
