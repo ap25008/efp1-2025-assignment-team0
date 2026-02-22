@@ -112,7 +112,7 @@ def create_order():
         return
 
     # 2. Αρχική Εισαγωγή Ποσοτήτων από τον Διευθυντή
-    print("\n--- ΑΡΧΙΚΗ ΕΠΕΞΕΡΓΑΣΙΑ ΔΙΕΥΘΥΝΤΗ ---")
+    print("\n ΑΡΧΙΚΗ ΕΠΕΞΕΡΓΑΣΙΑ ΔΙΕΥΘΥΝΤΗ")
     for barcode, entry in draft_orders.items():
         p = entry['product']
         print(f"\nΠροϊόν: {p.barcode} | {p.name} (Τρέχον Απόθεμα: {entry['current_qty']})")
@@ -127,3 +127,22 @@ def create_order():
             entry['final_text'] = new_text
             print(f"-> Το σύστημα στρογγυλοποίησε την επιλογή σας σε: {new_text} (Σύνολο: {new_total} τεμ.)")
 
+
+    # 3. Βρόχος (Loop) Προεπισκόπησης και Υποβολής/Τροποποίησης
+    while True:
+        print("ΠΡΟΕΠΙΣΚΟΠΗΣΗ ΠΑΡΑΓΓΕΛΙΑΣ")
+        print(f"{'BARCODE':<10} | {'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ (ΤΕΜ)':<15} | {'ΤΕΛΙΚΕΣ ΣΥΣΚΕΥΑΣΙΕΣ'}")
+        
+        for barcode, entry in draft_orders.items():
+            if entry['final_pieces'] > 0:
+                print(f"{barcode:<10} | {entry['product'].name:<15} | {entry['final_pieces']:<15} | {entry['final_text']}")
+        
+        print("\nΕπιλογές:")
+        print("1. Υποβολή (Οριστικοποίηση της παραγγελίας)")
+        print("2. Τροποποίηση (Αλλαγή ποσότητας σε συγκεκριμένο προϊόν)")
+        
+        action = input("Επιλέξτε ενέργεια (1 ή 2): ")
+        
+        if action == "1":
+            print(" ΕΠΙΤΥΧΙΑ: Η παραγγελία υποβλήθηκε επιτυχώς στους προμηθευτές!")
+            break
