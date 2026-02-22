@@ -81,5 +81,33 @@ def show_inventory():
 # Placeholder για Use Case Παραγγελίας
 
 def create_order():
-    print("\nΚαταχώρηση νέας παραγγελίας")
-    print("Η λειτουργία δεν έχει υλοποιηθεί ακόμη.\n")
+    print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΑΠΟΘΕΜΑ':<7} | {'ΕΛΛΕΙΜΜΑ':<8} | {'ΠΡΟΤΑΣΗ ΑΝΑΠΛΗΡΩΣΗΣ'}")
+
+    draft_orders = {}
+
+    
+ # 1. Παραγωγή αρχικής πρότασης από το σύστημα
+    for item in inventory:
+        p = item.product
+        if item.quantity <= p.min_limit:
+            needed = p.max_limit - item.quantity
+            
+            # Υπολογισμός νέας καθαρής πρότασης
+            proposal_text, total_prop_pieces = get_packaging_info(needed, p)
+            
+            draft_orders[p.barcode] = {
+                'product': p,
+                'current_qty': item.quantity,
+                'sys_needed': needed,
+                'sys_text': proposal_text,
+                'sys_pieces': total_prop_pieces,
+                'final_pieces': total_prop_pieces,
+                'final_text': proposal_text
+            }
+            
+            print(f"{p.barcode:<8} | {p.name:<12} | {p.category:<10} | {item.quantity:<7} | {needed:<8} | {proposal_text}")
+
+    if not draft_orders:
+        print("Το απόθεμα είναι επαρκές. Δεν απαιτείται παραγγελία.")
+        return
+
