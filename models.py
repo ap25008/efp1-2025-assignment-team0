@@ -34,3 +34,20 @@ class InventoryItem:
     def __init__(self, product, quantity):
         self.product = product      # Προϊόν
         self.quantity = quantity    # Διαθέσιμη ποσότητα
+
+
+class OrderItem:
+    # Οντότητα γραμμής παραγγελίας
+    def __init__(self, product, quantity, package_text):
+        self.product = product            # Το προϊόν που παραγγέλνουμε
+        self.quantity = quantity          # Η τελική ποσότητα (σε τεμάχια)
+        self.package_text = package_text  # Η περιγραφή της συσκευασίας (π.χ. "2 Παλ.")
+
+
+class Order:
+    # Οντότητα παραγγελίας προς προμηθευτή
+    def __init__(self, order_id, date, status="Έχει υποβληθεί"):
+        self.order_id = order_id  # Αριθμός παραγγελίας
+        self.date = date          # Ημερομηνία καταχώρησης
+        self.status = status      # Κατάσταση (default: "Έχει υποβληθεί")
+        self.items = []           # Λίστα από OrderItem
