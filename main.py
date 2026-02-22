@@ -1,5 +1,4 @@
-
-# ΚΥΡΙΟ ΠΡΟΓΡΑΜΜΑ 
+#ΚΥΡΙΟ ΠΡΟΓΡΑΜΜΑ
 
 from services import register_invoice, show_invoices, update_inventory, show_inventory, create_order, get_packaging_info, show_orders
 

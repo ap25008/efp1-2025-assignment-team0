@@ -50,17 +50,17 @@ def register_invoice():
         price = float(input("Τιμή μονάδας: "))
         quantity_input = int(input("Συνολική ποσότητα παραλαβής (π.χ. 2 παλέτες, ή 5 κιβώτια): "))
         
-        print("\nΕπιλέξτε τύπο συσκευασίας για αυτή την παραλαβή:")
-        print("1. Παλέτα")
-        print("2. Κιβώτιο")
-        print("3. Τεμάχιο")
-        pkg_choice = input("Επιλογή (1-3): ")
-        pkg_map = {"1": "Παλέτα", "2": "Κιβώτιο", "3": "Τεμάχιο"}
-        package_type = pkg_map.get(pkg_choice, "Τεμάχιο")
+        pkg_choice = 0
+            
+        while pkg_choice not in ["1", "2", "3"]:    
+           print("\nΕπιλέξτε τύπο συσκευασίας για αυτή την παραλαβή:")
+           print("1. Παλέτα")
+           print("2. Κιβώτιο")
+           print("3. Τεμάχιο")
+           pkg_choice = input("Επιλογή (1-3): ")
 
-        u_pallet = 1
-        u_box = 1
-        total_pieces = quantity_input
+           if pkg_choice not in ["1", "2", "3"]:
+               print("ΛΑΘΟΣ: Μη αποδεκτή επιλογή! Δοκιμάστε ξανά.")
 
         if pkg_choice == "1":
             u_pallet = int(input("Πόσα τεμάχια αντιστοιχούν σε 1 ΠΑΛΕΤΑ; "))
@@ -68,6 +68,15 @@ def register_invoice():
         elif pkg_choice == "2":
             u_box = int(input("Πόσα τεμάχια αντιστοιχούν σε 1 ΚΙΒΩΤΙΟ; "))
             total_pieces = quantity_input * u_box
+
+        pkg_map = {"1": "Παλέτα", "2": "Κιβώτιο", "3": "Τεμάχιο"}
+        package_type = pkg_map.get(pkg_choice)
+
+        u_pallet = 1
+        u_box = 1
+        total_pieces = quantity_input
+
+        
 
         min_l = int(input("Ελάχιστο όριο αποθέματος (Min): "))
         max_l = int(input("Μέγιστο όριο αποθέματος (Max): "))
@@ -107,7 +116,7 @@ def show_inventory():
     print("\nΤΡΕΧΟΝ ΑΠΟΘΕΜΑ")
     print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΤΙΜΗ':<6} | {'ΑΠΟΘΕΜΑ(ΤΕΜ)':<13} | {'MIN':<4} | {'MAX':<4}")
     for item in inventory:
-        print(f"{item.product.name} - {item.quantity} τεμάχια")
+        print(f"{item.product.barcode:<8} | {item.product.name:<12} | {item.product.category:<10} | {item.product.price:<6} | {item.quantity:<13} | {item.product.min_limit:<4} | {item.product.max_limit:<4}")
 
 # Προβολή Παραγγελιών
 def show_orders():
@@ -119,7 +128,6 @@ def show_orders():
     for order in orders:
         print(f"\nΠαραγγελία #{order.order_id} - Ημερομηνία: {order.date} - Κατάσταση: {order.status}")
         print(f"{'ΠΡΟΪΟΝ':<15} | {'ΠΟΣΟΤΗΤΑ':<10} | {'ΣΥΣΚΕΥΑΣΙΑ'}")
-        print("-" * 45)
         for item in order.items:
             print(f"{item.product.name:<15} | {item.quantity:<10} | {item.package_text}")
 
