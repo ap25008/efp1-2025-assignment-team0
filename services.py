@@ -97,13 +97,6 @@ def show_orders():
             print(f"{item.product.name:<15} | {item.quantity:<10} | {item.package_text}")
 
 
-# Placeholder για Use Case Παραγγελίας
-
-def create_order():
-    print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΑΠΟΘΕΜΑ':<7} | {'ΕΛΛΕΙΜΜΑ':<8} | {'ΠΡΟΤΑΣΗ ΑΝΑΠΛΗΡΩΣΗΣ'}")
-
-    draft_orders = {}
-
     #Στρογγυλοποίηση προς τα πάνω στο είδος που παραγγέλνεται
 def get_packaging_info(pieces, prod):
     if pieces == 0: return "Ακυρώθηκε", 0
@@ -116,6 +109,15 @@ def get_packaging_info(pieces, prod):
             return f"{boxes} Κιβ.", boxes * prod.units_per_box
     else:
             return f"{pieces} Τεμ.", pieces
+
+
+
+# Use Case: Δημιουργία Παραγγελίας
+
+def create_order():
+    print(f"{'BARCODE':<8} | {'ΠΡΟΪΟΝ':<12} | {'ΚΑΤΗΓΟΡΙΑ':<10} | {'ΑΠΟΘΕΜΑ':<7} | {'ΕΛΛΕΙΜΜΑ':<8} | {'ΠΡΟΤΑΣΗ ΑΝΑΠΛΗΡΩΣΗΣ'}")
+
+    draft_orders = {}
 
 
  # 1. Παραγωγή αρχικής πρότασης από το σύστημα
@@ -176,7 +178,27 @@ def get_packaging_info(pieces, prod):
         action = input("Επιλέξτε ενέργεια (1 ή 2): ")
         
         if action == "1":
-            print(" ΕΠΙΤΥΧΙΑ: Η παραγγελία υποβλήθηκε επιτυχώς στους προμηθευτές!")
+            # Χρήση των κλάσεων Order και OrderItem 
+            today_date = datetime.date.today().strftime("%Y-%m-%d")
+            order_number = len(orders) + 1
+            
+            # Δημιουργία του αντικειμένου Order
+            new_order = Order(order_number, today_date)
+
+            # Προσθήκη των προϊόντων (OrderItems) μέσα στην παραγγελία
+            for barcode, entry in draft_orders.items():
+                if entry['final_pieces'] > 0:
+                    order_item = OrderItem(entry['product'], entry['final_pieces'], entry['final_text'])
+                    new_order.items.append(order_item)
+            
+            # Αποθήκευση της νέας παραγγελίας στη λίστα
+            orders.append(new_order)
+
+            # Εμφάνιση των στοιχείων της παραγγελίας
+            print(" ΕΠΙΤΥΧΙΑ: Η παραγγελία υποβλήθηκε επιτυχώς!")
+            print(f" Αριθμός Παραγγελίας : {new_order.order_id}")
+            print(f" Ημερομηνία          : {new_order.date}")
+            print(f" Κατάσταση           : {new_order.status}")
             break
 
         elif action == "2":
